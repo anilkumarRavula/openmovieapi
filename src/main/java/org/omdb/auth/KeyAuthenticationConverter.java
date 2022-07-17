@@ -30,6 +30,7 @@ import reactor.core.publisher.Mono;
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -40,25 +41,25 @@ import java.util.stream.Collectors;
 @Component
 public class KeyAuthenticationConverter implements ServerAuthenticationConverter {
     private static final Logger LOG = LoggerFactory.getLogger(KeyAuthenticationConverter.class);
-    private static final String API_KEY_HEADER_NAME = "API_KEY";
+    private static final String API_KEY_HEADER_NAME = "key";
 
-    private  Map<String, KeyAuthenticationToken> apiTokens;
+    private  Map<String, KeyAuthenticationToken> apiTokens = new ConcurrentHashMap<>();
     private final APIKeyLoader apiKeyLoader;
     @Autowired
     public KeyAuthenticationConverter(APIKeyLoader apiKeyLoader) {
         this.apiKeyLoader = apiKeyLoader;
     }
-    //TODO : Load cache periodically
+    //TODO : Load cache periodically or event based
     @PostConstruct
     public void init() {
-        this.apiTokens = apiKeyLoader.loadApiKeys().stream().map(apiKey -> new KeyAuthenticationToken(apiKey.getKey(),apiKey.getEmail()))
-                .collect(Collectors.<KeyAuthenticationToken,String,KeyAuthenticationToken>toMap((auht-> (String) auht.getCredentials()), Function.identity()));
+        this.apiTokens.putAll(apiKeyLoader.loadApiKeys().stream().map(apiKey -> new KeyAuthenticationToken(apiKey.getKey(),apiKey.getEmail()))
+                .collect(Collectors.<KeyAuthenticationToken,String,KeyAuthenticationToken>toMap((auht-> (String) auht.getCredentials()), Function.identity())));
     }
 
     @Override
     public Mono<Authentication> convert(ServerWebExchange exchange) {
         return Mono.justOrEmpty(exchange)
-                .flatMap(serverWebExchange -> Mono.justOrEmpty(serverWebExchange.getRequest().getHeaders().get(API_KEY_HEADER_NAME)))
+                .flatMap(serverWebExchange -> Mono.justOrEmpty(serverWebExchange.getRequest().getQueryParams().get(API_KEY_HEADER_NAME)))
                 .filter(headerValues -> !headerValues.isEmpty())
                 .flatMap(headerValues -> lookup(headerValues.get(0)));
     }
@@ -70,6 +71,13 @@ public class KeyAuthenticationConverter implements ServerAuthenticationConverter
      * @return
      */
     private Mono<KeyAuthenticationToken> lookup(final String apiKey) {
+        if(apiKey == null) return Mono.empty();
+        init();
+        KeyAuthenticationToken token = apiTokens.get(apiKey);
+        if(token == null) {
+            System.out.println(apiTokens);
+            LOG.warn("No User found for {}",apiKey);
+        }
         return Mono.just(apiTokens.get(apiKey));
     }
 

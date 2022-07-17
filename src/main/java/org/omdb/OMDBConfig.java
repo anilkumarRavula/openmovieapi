@@ -25,7 +25,7 @@ public class OMDBConfig {
         final AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(keyAuthenticationManager);
         authenticationWebFilter.setServerAuthenticationConverter(keyAuthenticationConverter);
 
-        return http.authorizeExchange()
+        return http.authorizeExchange().pathMatchers("/api/keys/**").permitAll()
                 .anyExchange()
                 .authenticated()
                 .and()
@@ -48,25 +48,5 @@ public class OMDBConfig {
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         return objectMapper;
     }
-/*
-    @Bean
-    SecurityWebFilterChain springWebFilterChain(ServerHttpSecurity http) {
-        // @formatter:off
-        http
-                // ...
-                .authorizeExchange((authorize) -> authorize
-                        .pathMatchers("/resources/**", "/signup", "/about").permitAll()
-                        .pathMatchers("/admin/**").hasRole("ADMIN")
-                        .pathMatchers("/db/**").access((authentication, context) ->
-                                hasRole("ADMIN").check(authentication, context)
-                                        .filter(decision -> !decision.isGranted())
-                                        .switchIfEmpty(hasRole("DBA").check(authentication, context))
-                        )
-                        .anyExchange().denyAll()
-                );
-        // @formatter:on
-        return http.build();
-    }
-*/
 
 }

@@ -1,9 +1,5 @@
 package org.omdb.dataloader;
 
-import com.opencsv.CSVParser;
-import com.opencsv.CSVParserBuilder;
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import org.omdb.dataloader.mapper.AcademyAwardsMapper;
@@ -16,11 +12,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,33 +27,34 @@ public class DataLoader implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-       read(Paths.get(ClassLoader.getSystemResource(dataPath).toURI()));
+        read(getResourceFileAsInputStream(dataPath));
 
     }
 
-    public  List<String[]> read(Path filePath) throws Exception {
+    public Reader getReader(InputStream is) {
+        if (is != null) {
+            return new BufferedReader(new InputStreamReader(is));
+        } else {
+            throw new RuntimeException("resource not found");
+        }
+    }
+
+    public InputStream getResourceFileAsInputStream(String fileName) throws IOException {
+        ClassLoader classLoader = DataLoader.class.getClassLoader();
+        return classLoader.getResource(fileName).openStream();
+    }
+
+    public List<String[]> read(InputStream stream) throws Exception {
         List<String[]> list = new ArrayList<>();
-        CSVParser parser = new CSVParserBuilder()
-                .withSeparator(',')
-              //  .withIgnoreQuotations(true)
-                .build();
-        System.out.println(filePath.getFileName());
-        try (Reader reader = new FileReader(filePath.toFile())) {
+        try (Reader reader = getReader(stream)) {
 
-            CSVReaderBuilder csvReaderBuilder = new CSVReaderBuilder(reader)
-                    .withSkipLines(1)
-                    .withCSVParser(parser);
-
-            try (CSVReader csvReader = csvReaderBuilder.build()) {
-                CsvToBean<AcademyAwardsData> cb = new CsvToBeanBuilder<AcademyAwardsData>(reader)
-                        .withType(AcademyAwardsData.class)
-                        .build();
-                List<AcademyAwardsData> allData = cb.parse();
-                List<AcademyAward> data = allData.stream().map(AcademyAwardsMapper::map).collect(Collectors.toList());
-                System.out.println(data);
-                academyAwardsRepository.saveAll(data);
-                System.out.println("done");
-            }
+            CsvToBean<AcademyAwardsData> cb = new CsvToBeanBuilder<AcademyAwardsData>(reader)
+                    .withType(AcademyAwardsData.class)
+                    .build();
+            List<AcademyAwardsData> allData = cb.parse();
+            List<AcademyAward> data = allData.stream().map(AcademyAwardsMapper::map).collect(Collectors.toList());
+            System.out.println(data);
+            academyAwardsRepository.saveAll(data);
 
         }
         return list;

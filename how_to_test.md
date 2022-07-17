@@ -1,30 +1,20 @@
-# How to test front-end requests
+# How to test omdb-api requests
 
-## Steps to test front end request with a mock server
+## Steps to test API(S)
 
-* Setup proxy at package.json
 
-```javascript
-  "proxy": {
-    "/api": {
-      "target": "http://localhost:8000", // mock server url
-      "changeOrigin": true
-    }
-  }
+
+1. All the requests required api key so generate key .
 ```
+POST http://localhost:8080/api/keys
+Request body : {"email":"anil.ravula@gmail.com"}
+```
+Sample response
 
-All front end request that prefixed by "api" will be proxied to mock server.
+```{"apiKey": "C2YLm15lITARQrz9v8fc4NKApgAhZKyZhRag7JESvP355aczlw=="}```
 
-* Add mock server API
 
-E.g., see [server/routes/build.js](https://github.com/euler-ui/react-sample/blob/master/server/routes/build.js) for mocking build list.
+Testing oscar winning api
 
-* Add front end code to fetch request.
-
-E.g., See [redux/module/builds.js](https://github.com/euler-ui/react-sample/blob/master/src/redux/module/builds.js) for fetching build list request.
-
-* run ```npm run server``` to start mock server.
-
-* run ```npm start``` to start front-end dev server.
-
-* At opened browser, go to [realworld](http://localhost:3000/home/realworld), you'll see build list renders correctly with mock data.
+* At opened browser, go to (GET http://localhost:8080/api/academy-awards?key=<generated in step1>&tittle=<>), 
+* you'll see build list renders correctly with mock data.
