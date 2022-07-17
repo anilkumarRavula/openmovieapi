@@ -21,12 +21,12 @@ public class AcademyAwardsService {
         this.academyAwardsRepository = academyAwardsRepository;
     }
 
-    public ResponseEntity getByTittle(String tittle) {
-        List<AcademyAward> academyAwardList = academyAwardsRepository.findByCategoryIgnoreCaseAndNomineeIgnoreCase("Best Picture", tittle);
+    public ResponseEntity getByTitle(String title) {
+        List<AcademyAward> academyAwardList = academyAwardsRepository.findByCategoryIgnoreCaseAndNomineeIgnoreCase("Best Picture", title);
         if (CollectionUtils.isEmpty(academyAwardList)) {
             return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<List>(academyAwardList.stream().map(academyAward -> Map.of("tittle", academyAward.getNominee(), "year", academyAward.getYear(),
+        return new ResponseEntity<List>(academyAwardList.stream().map(academyAward -> Map.of("title", academyAward.getNominee(), "year", academyAward.getYear(),
                 "won", academyAward.getWon() ? "YES" : "NO")).collect(Collectors.toList()), HttpStatus.OK);
     }
 }

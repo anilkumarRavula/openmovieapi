@@ -15,15 +15,15 @@ Sample response
 
 ###Testing oscar omdb api
 
- GOTO post man, go to (GET http://localhost:8080/api/academy-awards?key=<generated in step1>&tittle=<>).
+ GOTO post man, go to (GET http://localhost:8080/api/academy-awards?key=<generated in step1>&title=<>).
 Note : encode api key before sending that it will be delivered asit is.
 for example : 
  API key :  LKy9xs4ss7JeT+VVt4YEGw4z++Hm8rwhGkrQ5WiBDHgPCySYGA== 
- Tittle : Avatar
+ Title : Avatar
 Sample Request :
 
-```http://localhost:8080/api/academy-awards?key=LKy9xs4ss7JeT%2BVVt4YEGw4z%2B%2BHm8rwhGkrQ5WiBDHgPCySYGA%3D%3D&tittle=Avatar```
+```http://localhost:8080/api/academy-awards?key=LKy9xs4ss7JeT%2BVVt4YEGw4z%2B%2BHm8rwhGkrQ5WiBDHgPCySYGA%3D%3D&title=Avatar```
 
 Sample Response : 
 
-```[{"year":"2009 ","won":"NO","tittle":"Avatar"}]```
+```[{"year":"2009 ","won":"NO","title":"Avatar"}]```

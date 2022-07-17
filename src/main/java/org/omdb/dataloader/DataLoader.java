@@ -2,9 +2,12 @@ package org.omdb.dataloader;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
+import org.omdb.controller.APIKeyController;
 import org.omdb.dataloader.mapper.AcademyAwardsMapper;
 import org.omdb.domain.AcademyAward;
 import org.omdb.repository.AcademyAwardsRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -18,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class DataLoader implements ApplicationRunner {
+    public static final Logger LOGGER = LoggerFactory.getLogger(ApplicationRunner.class);
 
     @Value("${data.seed.path:db/academy_awards.csv}")
     private String dataPath;
@@ -53,9 +57,8 @@ public class DataLoader implements ApplicationRunner {
                     .build();
             List<AcademyAwardsData> allData = cb.parse();
             List<AcademyAward> data = allData.stream().map(AcademyAwardsMapper::map).collect(Collectors.toList());
-            System.out.println(data);
             academyAwardsRepository.saveAll(data);
-
+            LOGGER.info("Data Loaded");
         }
         return list;
     }

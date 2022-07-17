@@ -32,4 +32,3 @@ or
 You may need to find out:
 
 * [How to test front-test requests](./how_to_test_request.md).
-* [Separation of front-end and back-end](./separation_of_fe_be.md).

@@ -4,7 +4,6 @@ import org.omdb.service.AcademyAwardsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -19,9 +18,9 @@ public class AcademyAwardsController {
     }
 
     @GetMapping
-    public Mono<ResponseEntity> getByTittle(@RequestParam String tittle) {
-        LOGGER.debug("getByTittle");
-        return  Mono.just(academyAwardsService.getByTittle(tittle));
+    public Mono<ResponseEntity> getByTitle(@RequestParam String title) {
+        LOGGER.debug("getByTitle");
+        return  Mono.just(academyAwardsService.getByTitle(title));
     }
 
 

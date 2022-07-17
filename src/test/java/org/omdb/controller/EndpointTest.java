@@ -24,12 +24,12 @@ public class EndpointTest {
     private WebTestClient webClient;
 
     @Test
-    public void givenMovieTittleShouldReturnMovieDetails() {
-        String movieTittle = "Avatar";
+    public void givenMovieTitleShouldReturnMovieDetails() {
+        String movieTitle = "Avatar";
         String apiKey = getAPIKey("anil.r@gmail.com");
         System.out.println(apiKey);
         this.webClient.get().uri(uriBuilder -> uriBuilder.path( "/api/academy-awards")
-                        .queryParam("tittle",movieTittle)
+                        .queryParam("title",movieTitle)
                         .queryParam("key", "{apiKey}")
                         .build(Map.of("apiKey",apiKey)))
                 .accept(MediaType.APPLICATION_JSON)
