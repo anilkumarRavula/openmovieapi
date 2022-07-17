@@ -7,7 +7,7 @@ date: 16/07/2022
 
 # Open movie API for Movie search and rating
 
-> [!Note] 
+> A Cloud Native Solution , which uses Java 11 and Spring boot.
 
 ## Use 
 
