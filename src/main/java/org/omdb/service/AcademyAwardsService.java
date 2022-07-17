@@ -22,7 +22,7 @@ public class AcademyAwardsService {
     }
 
     public ResponseEntity getByTittle(String tittle) {
-        List<AcademyAward> academyAwardList = academyAwardsRepository.findByCategoryAndNominee("Best Picture", tittle);
+        List<AcademyAward> academyAwardList = academyAwardsRepository.findByCategoryIgnoreCaseAndNomineeIgnoreCase("Best Picture", tittle);
         if (CollectionUtils.isEmpty(academyAwardList)) {
             return ResponseEntity.notFound().build();
         }

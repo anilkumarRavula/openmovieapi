@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface AcademyAwardsRepository extends JpaRepository<AcademyAward, BigInteger> {
 
-    List<AcademyAward> findByCategoryAndNominee(String category,String nominee);
+    List<AcademyAward> findByCategoryIgnoreCaseAndNomineeIgnoreCase(String category,String nominee);
 }

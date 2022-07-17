@@ -30,6 +30,7 @@ import reactor.core.publisher.Mono;
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -43,17 +44,10 @@ public class KeyAuthenticationConverter implements ServerAuthenticationConverter
     private static final Logger LOG = LoggerFactory.getLogger(KeyAuthenticationConverter.class);
     private static final String API_KEY_HEADER_NAME = "key";
 
-    private  Map<String, KeyAuthenticationToken> apiTokens = new ConcurrentHashMap<>();
     private final APIKeyLoader apiKeyLoader;
     @Autowired
     public KeyAuthenticationConverter(APIKeyLoader apiKeyLoader) {
         this.apiKeyLoader = apiKeyLoader;
-    }
-    //TODO : Load cache periodically or event based
-    @PostConstruct
-    public void init() {
-        this.apiTokens.putAll(apiKeyLoader.loadApiKeys().stream().map(apiKey -> new KeyAuthenticationToken(apiKey.getKey(),apiKey.getEmail()))
-                .collect(Collectors.<KeyAuthenticationToken,String,KeyAuthenticationToken>toMap((auht-> (String) auht.getCredentials()), Function.identity())));
     }
 
     @Override
@@ -72,13 +66,13 @@ public class KeyAuthenticationConverter implements ServerAuthenticationConverter
      */
     private Mono<KeyAuthenticationToken> lookup(final String apiKey) {
         if(apiKey == null) return Mono.empty();
-        init();
-        KeyAuthenticationToken token = apiTokens.get(apiKey);
-        if(token == null) {
-            System.out.println(apiTokens);
-            LOG.warn("No User found for {}",apiKey);
+        Optional<ApiKey> key = apiKeyLoader.getAPIKey(apiKey);
+        if(key.isPresent()) {
+            return Mono.just(new KeyAuthenticationToken(key.get().getKey(), key.get().getEmail()));
+        } else {
+            return Mono.just(new KeyAuthenticationToken(null, null));
         }
-        return Mono.just(apiTokens.get(apiKey));
+
     }
 
     /**
@@ -92,8 +86,8 @@ public class KeyAuthenticationConverter implements ServerAuthenticationConverter
             this.apiKeyRepository = apiKeyRepository;
 
         }
-        public List<ApiKey> loadApiKeys() {
-           return apiKeyRepository.findAll();
+        public Optional<ApiKey> getAPIKey(String key) {
+           return apiKeyRepository.findByKey(key);
         }
 
     }
