@@ -24,7 +24,7 @@ public class DataLoader implements ApplicationRunner {
     public static final Logger LOGGER = LoggerFactory.getLogger(ApplicationRunner.class);
 
     @Value("${data.seed.path:db/academy_awards.csv}")
-    private String dataPath;
+    private String dataPath = "db/academy_awards.csv";
     private final AcademyAwardsService academyAwardsService;
 
     @Autowired
