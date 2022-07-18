@@ -29,4 +29,8 @@ public class AcademyAwardsService {
         return new ResponseEntity<List>(academyAwardList.stream().map(academyAward -> Map.of("title", academyAward.getNominee(), "year", academyAward.getYear(),
                 "won", academyAward.getWon() ? "YES" : "NO")).collect(Collectors.toList()), HttpStatus.OK);
     }
+
+    public void saveAll(List<AcademyAward> data) {
+        academyAwardsRepository.saveAll(data);
+    }
 }

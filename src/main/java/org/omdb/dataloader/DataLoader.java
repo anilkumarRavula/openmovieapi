@@ -2,10 +2,10 @@ package org.omdb.dataloader;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-import org.omdb.controller.APIKeyController;
 import org.omdb.dataloader.mapper.AcademyAwardsMapper;
 import org.omdb.domain.AcademyAward;
 import org.omdb.repository.AcademyAwardsRepository;
+import org.omdb.service.AcademyAwardsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,17 +25,20 @@ public class DataLoader implements ApplicationRunner {
 
     @Value("${data.seed.path:db/academy_awards.csv}")
     private String dataPath;
+    private final AcademyAwardsService academyAwardsService;
 
     @Autowired
-    private AcademyAwardsRepository academyAwardsRepository;
+    public DataLoader(AcademyAwardsService academyAwardsService) {
+        this.academyAwardsService = academyAwardsService;
+    }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        read(getResourceFileAsInputStream(dataPath));
+        loadData(getResourceFileAsInputStream(dataPath));
 
     }
 
-    public Reader getReader(InputStream is) {
+    private Reader getReader(InputStream is) {
         if (is != null) {
             return new BufferedReader(new InputStreamReader(is));
         } else {
@@ -43,12 +46,12 @@ public class DataLoader implements ApplicationRunner {
         }
     }
 
-    public InputStream getResourceFileAsInputStream(String fileName) throws IOException {
+    private InputStream getResourceFileAsInputStream(String fileName) throws IOException {
         ClassLoader classLoader = DataLoader.class.getClassLoader();
         return classLoader.getResource(fileName).openStream();
     }
 
-    public List<String[]> read(InputStream stream) throws Exception {
+    private void loadData(InputStream stream) throws Exception {
         List<String[]> list = new ArrayList<>();
         try (Reader reader = getReader(stream)) {
 
@@ -57,9 +60,8 @@ public class DataLoader implements ApplicationRunner {
                     .build();
             List<AcademyAwardsData> allData = cb.parse();
             List<AcademyAward> data = allData.stream().map(AcademyAwardsMapper::map).collect(Collectors.toList());
-            academyAwardsRepository.saveAll(data);
+            academyAwardsService.saveAll(data);
             LOGGER.info("Data Loaded");
         }
-        return list;
     }
 }

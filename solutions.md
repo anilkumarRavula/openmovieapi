@@ -7,7 +7,15 @@ date: 16/07/2022
 
 # Open movie API for Movie search and rating
 
-> A Cloud Native Solution , which uses Java 11 and Spring boot.
+> A Cloud Native Solution , which uses Java 11 and Spring boot. 
+
+> API services are reactive services developed using Webflux.
+
+> H2 database is used but can be replaced with any traditional database. 
+
+> Spring Security to Generate API keys . 
+
+> Spring Boot Test for component test cases.
 
 ## Use 
 

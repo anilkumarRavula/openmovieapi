@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = OMDBApplication.class,properties = "spring.main.web-application-type=reactive")
-public class EndpointTest {
+public class OscarAwardsEndpointTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
