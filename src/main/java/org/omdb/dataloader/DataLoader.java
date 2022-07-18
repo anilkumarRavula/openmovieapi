@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Data Loader will load data from external csv file and saves the data into academy_awards
+ */
 @Component
 public class DataLoader implements ApplicationRunner {
     public static final Logger LOGGER = LoggerFactory.getLogger(ApplicationRunner.class);
@@ -51,6 +54,11 @@ public class DataLoader implements ApplicationRunner {
         return classLoader.getResource(fileName).openStream();
     }
 
+    /**
+     * USes given input stream and create csntobean for the given csv stream.
+     * @param stream
+     * @throws Exception
+     */
     private void loadData(InputStream stream) throws Exception {
         List<String[]> list = new ArrayList<>();
         try (Reader reader = getReader(stream)) {
