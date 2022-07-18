@@ -3,6 +3,8 @@
 
 ## Infrastructure Assumptions
 
-> Embedded database to  complete the solution, no hard code dependency o the database.
+> Embedded database to  complete the solution, no hard code dependency to the database.
 
-## 
+##  Service Design
+
+> DataLoader will always get csv file to load the data.

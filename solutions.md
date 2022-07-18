@@ -17,7 +17,15 @@ date: 16/07/2022
 
 > Spring Boot Test for component test cases.
 
-## Use 
+ 
+
+## Design Consideration
+
+> Loading csv while starting up the Server using DataLoader class
+
+> Opencsv used for reading the data
+
+ 
 
 ## SEE ALSO
 You may need to find out:
